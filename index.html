@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mirrors of the Soul – Understanding the Self</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><radialGradient id='bg' cx='50%25' cy='50%25' r='50%25'><stop offset='0%25' stop-color='%232d1b4e'/><stop offset='100%25' stop-color='%231a1225'/></radialGradient></defs><rect width='64' height='64' rx='14' fill='url(%23bg)'/><ellipse cx='32' cy='30' rx='14' ry='18' fill='none' stroke='%239b72cf' stroke-width='2'/><ellipse cx='32' cy='30' rx='8' ry='11' fill='none' stroke='%23e8c87a' stroke-width='1.5'/><circle cx='32' cy='30' r='3' fill='%23e8c87a'/><line x1='32' y1='12' x2='32' y2='8' stroke='%23e07a8a' stroke-width='1.5' stroke-linecap='round'/><line x1='46' y1='30' x2='50' y2='30' stroke='%23e07a8a' stroke-width='1.5' stroke-linecap='round'/><line x1='18' y1='30' x2='14' y2='30' stroke='%23e07a8a' stroke-width='1.5' stroke-linecap='round'/><line x1='42.9' y1='17.1' x2='45.7' y2='14.3' stroke='%234fbdba' stroke-width='1.5' stroke-linecap='round'/><line x1='21.1' y1='17.1' x2='18.3' y2='14.3' stroke='%234fbdba' stroke-width='1.5' stroke-linecap='round'/><rect x='22' y='50' width='20' height='3' rx='1.5' fill='%23e8c87a' opacity='0.6'/></svg>">
+<style>
+  :root {
+    --gold: #e8c87a;
+    --rose: #e07a8a;
+    --teal: #4fbdba;
+    --violet: #9b72cf;
+    --sage: #7bbfa5;
+    --warm-bg: #fdf6ee;
+    --dark: #1a1225;
+    --ink: #2d2040;
+    --cream: #fdf6ee;
+    --soft-white: #fff9f2;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--warm-bg); color: var(--ink); overflow-x: hidden; }
+
+  /* ─── PROGRESS BAR ─── */
+  #progress-bar {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: linear-gradient(90deg, var(--violet), var(--rose), var(--gold), var(--teal));
+    z-index: 9999; width: 0%; transition: width 0.1s linear;
+  }
+
+  /* ─── PAGE INDICATOR ─── */
+  #page-pill {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+    z-index: 1000;
+    display: flex; flex-direction: column; align-items: stretch;
+    background: rgba(26,18,37,0.85);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(232,200,122,0.25);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    overflow: hidden;
+  }
+  #page-toggle {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 11px 22px; cursor: pointer;
+    border: none; background: none; color: var(--soft-white);
+    font-family: 'DM Sans', sans-serif;
+  }
+  #page-toggle:hover { background: rgba(255,255,255,0.05); }
+  .pg-current { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--gold); line-height: 1; min-width: 18px; text-align: center; }
+  .pg-sep { font-size: 0.75rem; color: rgba(255,249,242,0.25); }
+  .pg-total { font-size: 0.72rem; color: rgba(255,249,242,0.45); }
+  .pg-label { font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,249,242,0.35); padding-left: 4px; }
+  .pg-chevron { font-size: 0.65rem; color: rgba(255,249,242,0.35); transition: transform 0.3s; }
+  .pg-chevron.open { transform: rotate(180deg); }
+  #page-menu { display: none; flex-direction: column; border-top: 1px solid rgba(232,200,122,0.12); max-height: 300px; overflow-y: auto; }
+  #page-menu.open { display: flex; }
+  #page-menu a { display: flex; align-items: center; gap: 12px; padding: 9px 22px; text-decoration: none; color: rgba(255,249,242,0.65); font-size: 0.72rem; transition: background 0.15s, color 0.15s; white-space: nowrap; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  #page-menu a:last-child { border-bottom: none; }
+  #page-menu a:hover { background: rgba(232,200,122,0.1); color: var(--gold); }
+  #page-menu a.active { color: var(--gold); background: rgba(232,200,122,0.08); }
+  #page-menu a .mn { font-family: 'Playfair Display', serif; font-size: 0.85rem; font-weight: 700; min-width: 30px; color: var(--gold); opacity: 0.65; }
+  #page-menu a.active .mn { opacity: 1; }
+
+  /* ─── IMAGE CONTAINER ─── */
+  .img-wrap {
+    width: 100%;
+    max-width: 560px;
+    margin: 28px auto;
+    border-radius: 18px;
+    overflow: hidden;
+    cursor: zoom-in;
+    position: relative;
+    box-shadow: 0 6px 28px rgba(0,0,0,0.11), 0 0 0 1.5px rgba(0,0,0,0.06);
+    background: rgba(245,240,252,0.6);
+    /* Fixed height so all images are same size */
+    height: 280px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .img-wrap img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    padding: 16px;
+    display: block;
+    transition: transform 0.35s ease;
+  }
+  .img-wrap:hover img { transform: scale(1.04); }
+  .img-hint {
+    position: absolute; bottom: 10px; right: 12px;
+    background: rgba(26,18,37,0.7);
+    color: rgba(255,249,242,0.85);
+    font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 20px;
+    backdrop-filter: blur(6px);
+    opacity: 0; transition: opacity 0.2s;
+    pointer-events: none;
+  }
+  .img-wrap:hover .img-hint { opacity: 1; }
+  .img-label {
+    position: absolute; top: 10px; left: 12px;
+    background: rgba(26,18,37,0.55);
+    color: rgba(255,249,242,0.6);
+    font-size: 0.56rem; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 20px;
+    backdrop-filter: blur(4px);
+  }
+
+  /* ─── LIGHTBOX ─── */
+  #lightbox {
+    display: none; position: fixed; inset: 0; z-index: 99999;
+    background: rgba(8,4,18,0.94);
+    backdrop-filter: blur(12px);
+    align-items: center; justify-content: center;
+    cursor: zoom-out;
+  }
+  #lightbox.open { display: flex; }
+  #lightbox-inner {
+    position: relative;
+    max-width: 92vw; max-height: 90vh;
+    animation: lbIn 0.22s ease;
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+  }
+  @keyframes lbIn { from { opacity:0; transform:scale(0.94); } to { opacity:1; transform:scale(1); } }
+  #lightbox-inner img {
+    max-width: 100%; max-height: 82vh;
+    border-radius: 14px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.55);
+    object-fit: contain;
+    cursor: default;
+  }
+  #lightbox-caption { color: rgba(255,249,242,0.45); font-size: 0.72rem; letter-spacing: 0.08em; }
+  #lightbox-close {
+    position: fixed; top: 18px; right: 22px;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+    color: white; font-size: 1.2rem; width: 38px; height: 38px;
+    border-radius: 50%; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s; z-index: 2;
+  }
+  #lightbox-close:hover { background: rgba(255,255,255,0.22); }
+
+  /* ─── HERO ─── */
+  #hero { min-height: 100vh; background: linear-gradient(135deg,#1a1225 0%,#2d1b4e 40%,#1a2d3d 70%,#0d1f1a 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; text-align: center; padding: 40px 20px; }
+  .orbs { position: absolute; inset: 0; pointer-events: none; }
+  .orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.35; animation: drift 8s ease-in-out infinite alternate; }
+  .orb-1 { width: 400px; height: 400px; background: var(--violet); top: -100px; left: -100px; }
+  .orb-2 { width: 300px; height: 300px; background: var(--teal); bottom: -80px; right: -80px; animation-delay: -3s; }
+  .orb-3 { width: 250px; height: 250px; background: var(--rose); top: 40%; left: 30%; animation-delay: -5s; }
+  .orb-4 { width: 200px; height: 200px; background: var(--gold); bottom: 20%; left: 10%; animation-delay: -2s; }
+  @keyframes drift { 0%{transform:translate(0,0) scale(1);} 100%{transform:translate(30px,20px) scale(1.08);} }
+  .stars { position: absolute; inset: 0; pointer-events: none; }
+  .star { position: absolute; width: 2px; height: 2px; background: white; border-radius: 50%; animation: twinkle 3s ease-in-out infinite alternate; }
+  @keyframes twinkle { 0%{opacity:.2;} 100%{opacity:1;} }
+  .hero-badge { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); border: 1px solid rgba(232,200,122,0.4); padding: 6px 18px; border-radius: 20px; margin-bottom: 28px; animation: fadeSlideUp 1s ease both; }
+  .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(3rem,9vw,7rem); font-weight: 900; line-height: 0.95; color: var(--soft-white); animation: fadeSlideUp 1s ease .2s both; }
+  .hero-title em { font-style: italic; background: linear-gradient(90deg,var(--gold),var(--rose),var(--teal)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero-subtitle { font-family: 'Cormorant Garamond',serif; font-size: clamp(1rem,2.5vw,1.4rem); font-style: italic; font-weight: 300; color: rgba(255,249,242,0.65); margin-top: 20px; max-width: 500px; animation: fadeSlideUp 1s ease .4s both; }
+  .hero-meta { margin-top: 50px; display: flex; gap: 40px; flex-wrap: wrap; justify-content: center; animation: fadeSlideUp 1s ease .6s both; }
+  .hero-meta div { text-align: center; }
+  .hero-meta .label { font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,249,242,0.4); }
+  .hero-meta .value { font-family: 'Playfair Display',serif; font-size: 0.95rem; color: var(--gold); margin-top: 4px; }
+  .scroll-hint { position: absolute; bottom: 32px; display: flex; flex-direction: column; align-items: center; gap: 8px; color: rgba(255,249,242,0.35); font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; animation: bounce 2s ease-in-out infinite; }
+  .scroll-hint svg { width: 16px; height: 16px; }
+  @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(8px);} }
+  @keyframes fadeSlideUp { from{opacity:0;transform:translateY(30px);} to{opacity:1;transform:translateY(0);} }
+
+  /* ─── SHARED ─── */
+  section { padding: 80px 20px; }
+  .container { max-width: 860px; margin: 0 auto; }
+  .section-label { font-size: 0.6rem; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 500; margin-bottom: 12px; }
+  .section-title { font-family: 'Playfair Display',serif; font-size: clamp(1.8rem,4vw,2.8rem); font-weight: 700; line-height: 1.2; margin-bottom: 24px; }
+  .section-title em { font-style: italic; font-weight: 400; }
+  .body-text { font-size: 1rem; line-height: 1.85; color: #4a3f5c; font-family: 'DM Sans',sans-serif; font-weight: 300; }
+  .body-text p + p { margin-top: 16px; }
+  .divider { width: 60px; height: 3px; border-radius: 2px; margin-bottom: 32px; }
+  .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .section-roman { font-family: 'Playfair Display',serif; font-size: 5rem; font-weight: 900; line-height: 1; opacity: 0.06; position: absolute; top: 20px; right: 30px; pointer-events: none; user-select: none; }
+
+  /* ─── TOC ─── */
+  #toc { background: var(--soft-white); }
+  .toc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1.5px solid rgba(155,114,207,0.2); border-radius: 16px; overflow: hidden; margin-top: 40px; }
+  @media(max-width:600px){ .toc-grid{ grid-template-columns: 1fr; } }
+  .toc-item { display: flex; align-items: center; gap: 16px; padding: 18px 24px; border-bottom: 1px solid rgba(155,114,207,0.12); border-right: 1px solid rgba(155,114,207,0.12); transition: background .2s; text-decoration: none; color: inherit; cursor: pointer; }
+  .toc-item:hover { background: rgba(155,114,207,0.06); }
+  .toc-item:nth-child(even){ border-right: none; }
+  .toc-num { font-family: 'Playfair Display',serif; font-size: 1.4rem; font-weight: 700; min-width: 36px; line-height: 1; }
+  .toc-info { flex: 1; }
+  .toc-name { font-size: 0.82rem; font-weight: 500; margin-bottom: 2px; }
+  .toc-sub { font-size: 0.68rem; color: #9b8ab0; letter-spacing: 0.05em; }
+  .toc-pg { font-size: 0.7rem; color: #c0b0d0; margin-left: auto; }
+
+  /* ─── ESSAY ─── */
+  #essay { background: linear-gradient(160deg,#f0e8fa 0%,#e8f5f0 100%); }
+  .pull-quote { font-family: 'Cormorant Garamond',serif; font-size: clamp(1.3rem,3vw,1.9rem); font-style: italic; font-weight: 300; color: var(--violet); border-left: 4px solid var(--violet); padding: 12px 24px; margin: 32px 0; line-height: 1.6; }
+
+  /* ─── SMART ─── */
+  #smart { background: var(--soft-white); }
+  .smart-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; margin: 36px 0; }
+  @media(max-width:700px){ .smart-grid{ grid-template-columns: repeat(2,1fr); } }
+  @media(max-width:400px){ .smart-grid{ grid-template-columns: 1fr; } }
+  .smart-card { border-radius: 16px; padding: 20px 16px; text-align: center; transition: transform .3s,box-shadow .3s; }
+  .smart-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(0,0,0,.1); }
+  .smart-card .letter { font-family: 'Playfair Display',serif; font-size: 2.4rem; font-weight: 900; line-height: 1; }
+  .smart-card .word { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; margin: 6px 0 8px; font-weight: 600; }
+  .smart-card .desc { font-size: 0.72rem; line-height: 1.5; opacity: .85; }
+  .smart-s{background:linear-gradient(135deg,#ffe8f0,#ffd0e0);color:#8b2042;}
+  .smart-m{background:linear-gradient(135deg,#e8f0ff,#d0deff);color:#1a3a8b;}
+  .smart-a{background:linear-gradient(135deg,#e8fff0,#c8f5d8);color:#1a6b3a;}
+  .smart-r{background:linear-gradient(135deg,#fff8e0,#ffe8a0);color:#6b4a00;}
+  .smart-t{background:linear-gradient(135deg,#f0e8ff,#e0ccff);color:#4a1a8b;}
+  .reflection-box { background: linear-gradient(135deg,var(--dark),#2d1b4e); border-radius: 20px; padding: 40px; color: var(--soft-white); margin-top: 28px; position: relative; overflow: hidden; }
+  .reflection-box::before { content:'"'; position: absolute; top: -10px; left: 20px; font-family: 'Playfair Display',serif; font-size: 12rem; opacity: 0.06; line-height: 1; color: white; pointer-events: none; }
+  .reflection-box p { font-size: 0.95rem; line-height: 1.85; position: relative; z-index: 1; }
+
+  /* ─── ASSESS ─── */
+  .assess-section { padding: 80px 20px; }
+  .assess-section:nth-child(odd){ background: var(--warm-bg); }
+  .assess-section:nth-child(even){ background: var(--soft-white); }
+  .assess-header { display: flex; align-items: center; gap: 20px; margin-bottom: 36px; flex-wrap: wrap; }
+  .assess-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; flex-shrink: 0; }
+  .assess-num { font-family: 'Cormorant Garamond',serif; font-size: 0.85rem; font-style: italic; color: #9b8ab0; display: block; margin-bottom: 4px; }
+  .cards-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 28px; }
+  @media(max-width:580px){ .cards-row{ grid-template-columns: 1fr; } }
+  .mini-card { border-radius: 14px; padding: 22px; border: 1.5px solid rgba(0,0,0,0.06); transition: transform .25s,box-shadow .25s; }
+  .mini-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,.08); }
+  .mini-card h4 { font-family: 'Playfair Display',serif; font-size: 1rem; margin-bottom: 10px; }
+  .mini-card p { font-size: 0.82rem; line-height: 1.7; color: #6a5f7a; }
+  .mini-card p + p { margin-top: 10px; }
+  .theme-east{ --accent:#4fbdba; --light:#e6f7f7; }
+  .theme-philo{ --accent:#9b72cf; --light:#f3eeff; }
+  .theme-anthro{ --accent:#e07a8a; --light:#fdeef0; }
+  .theme-body{ --accent:#e8c87a; --light:#fff9e8; }
+  .theme-material{ --accent:#7bbfa5; --light:#eef8f3; }
+  .theme-spirit{ --accent:#c07a9b; --light:#fceef5; }
+  .mini-card-accent { background: var(--light); border-color: color-mix(in srgb,var(--accent) 20%,white); }
+  .mini-card-accent h4 { color: var(--accent); }
+
+  /* ─── PARTING ─── */
+  #parting { background: linear-gradient(135deg,#1a1225 0%,#2d1b4e 50%,#1a2d3d 100%); color: var(--soft-white); padding: 100px 20px; text-align: center; position: relative; overflow: hidden; }
+  #parting .section-title { color: var(--soft-white); }
+  #parting .section-label { color: var(--gold); }
+  #parting .body-text { color: rgba(255,249,242,0.72); max-width: 700px; margin: 0 auto; }
+  #parting .pull-quote { color: var(--gold); border-color: var(--gold); text-align: left; max-width: 700px; margin: 32px auto; }
+  .promise-card { display: inline-block; background: rgba(255,255,255,0.07); border: 1px solid rgba(232,200,122,0.25); border-radius: 16px; padding: 28px 36px; max-width: 560px; margin-top: 40px; backdrop-filter: blur(8px); }
+  .promise-card p { font-family: 'Cormorant Garamond',serif; font-size: 1.15rem; font-style: italic; font-weight: 300; line-height: 1.75; color: rgba(255,249,242,0.88); }
+
+  /* ─── FOOTER ─── */
+  footer { background: var(--dark); color: rgba(255,249,242,0.3); text-align: center; padding: 28px 20px; font-size: 0.7rem; letter-spacing: 0.08em; }
+  footer span { color: var(--gold); }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox">
+  <button id="lightbox-close">✕</button>
+  <div id="lightbox-inner">
+    <img id="lightbox-img" src="" alt="">
+    <div id="lightbox-caption"></div>
+  </div>
+</div>
+
+<!-- PAGE INDICATOR -->
+<div id="page-pill">
+  <button id="page-toggle" aria-label="Toggle page menu">
+    <span class="pg-current" id="pg-num">1</span>
+    <span class="pg-sep">/</span>
+    <span class="pg-total">11</span>
+    <span class="pg-label">pages</span>
+    <span class="pg-chevron" id="pg-chevron">▲</span>
+  </button>
+  <div id="page-menu">
+    <a href="#hero" data-page="1"><span class="mn">I</span> Front Page</a>
+    <a href="#toc" data-page="2"><span class="mn">II</span> Table of Contents</a>
+    <a href="#essay" data-page="3"><span class="mn">III</span> Introductory Essay</a>
+    <a href="#smart" data-page="4"><span class="mn">IV</span> SMART Goal</a>
+    <a href="#east" data-page="5"><span class="mn">V</span> Eastern &amp; Western</a>
+    <a href="#philo" data-page="6"><span class="mn">VI</span> Philosophical &amp; Psychological</a>
+    <a href="#anthro" data-page="7"><span class="mn">VII</span> Anthropological &amp; Sociological</a>
+    <a href="#body" data-page="8"><span class="mn">VIII</span> Physical &amp; Sexual</a>
+    <a href="#material" data-page="9"><span class="mn">IX</span> Material &amp; Digital</a>
+    <a href="#spirit" data-page="10"><span class="mn">X</span> Spiritual &amp; Political</a>
+    <a href="#parting" data-page="11"><span class="mn">XI</span> Parting Words</a>
+  </div>
+</div>
+
+<!-- ══════════════ I. FRONT PAGE -->
+<section id="hero">
+  <div class="orbs">
+    <div class="orb orb-1"></div><div class="orb orb-2"></div>
+    <div class="orb orb-3"></div><div class="orb orb-4"></div>
+  </div>
+  <div class="stars" id="stars"></div>
+  <div class="hero-badge">Final Requirement · Understanding the Self</div>
+  <h1 class="hero-title">Mirrors<br>of the <em>Soul</em></h1>
+  <p class="hero-subtitle">A journey inward — fragments of identity assembled into a self I am still learning to know.</p>
+  <div class="hero-meta">
+    <div><div class="label">Subject</div><div class="value">Understanding the Self</div></div>
+    <div><div class="label">Document</div><div class="value">Final Requirement</div></div>
+    <div><div class="label">Semester</div><div class="value">2nd Sem · 2026</div></div>
+  </div>
+  <div class="scroll-hint">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    Scroll to explore
+  </div>
+</section>
+
+<!-- ══════════════ II. TABLE OF CONTENTS -->
+<section id="toc">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label" style="color:var(--violet)">Navigate</div>
+      <h2 class="section-title">Table of <em>Contents</em></h2>
+      <div class="divider" style="background:var(--violet)"></div>
+    </div>
+    <div class="toc-grid reveal">
+      <a class="toc-item" href="#hero"><div class="toc-num" style="color:var(--rose)">I</div><div class="toc-info"><div class="toc-name">Mirrors of the Soul</div><div class="toc-sub">Front / Title Page</div></div><div class="toc-pg">p.1</div></a>
+      <a class="toc-item" href="#toc"><div class="toc-num" style="color:var(--violet)">II</div><div class="toc-info"><div class="toc-name">Navigate the Journey</div><div class="toc-sub">Table of Contents</div></div><div class="toc-pg">p.2</div></a>
+      <a class="toc-item" href="#essay"><div class="toc-num" style="color:var(--teal)">III</div><div class="toc-info"><div class="toc-name">The Courage to Look Inward</div><div class="toc-sub">Introductory Essay</div></div><div class="toc-pg">p.3</div></a>
+      <a class="toc-item" href="#smart"><div class="toc-num" style="color:var(--gold)">IV</div><div class="toc-info"><div class="toc-name">A Goal, Revisited</div><div class="toc-sub">SMART Goal Reflection</div></div><div class="toc-pg">p.4</div></a>
+      <a class="toc-item" href="#east"><div class="toc-num" style="color:var(--teal)">V</div><div class="toc-info"><div class="toc-name">Two Worlds, One Self</div><div class="toc-sub">Eastern &amp; Western Self</div></div><div class="toc-pg">p.5</div></a>
+      <a class="toc-item" href="#philo"><div class="toc-num" style="color:var(--violet)">VI</div><div class="toc-info"><div class="toc-name">Thinking &amp; Feeling</div><div class="toc-sub">Philosophical &amp; Psychological Self</div></div><div class="toc-pg">p.6</div></a>
+      <a class="toc-item" href="#anthro"><div class="toc-num" style="color:var(--rose)">VII</div><div class="toc-info"><div class="toc-name">Shaped by the Tribe</div><div class="toc-sub">Anthropological &amp; Sociological Self</div></div><div class="toc-pg">p.7</div></a>
+      <a class="toc-item" href="#body"><div class="toc-num" style="color:var(--gold)">VIII</div><div class="toc-info"><div class="toc-name">The Body I Inhabit</div><div class="toc-sub">Physical &amp; Sexual Self</div></div><div class="toc-pg">p.8</div></a>
+      <a class="toc-item" href="#material"><div class="toc-num" style="color:var(--sage)">IX</div><div class="toc-info"><div class="toc-name">What I Own &amp; Who I Am Online</div><div class="toc-sub">Material &amp; Digital Self</div></div><div class="toc-pg">p.9</div></a>
+      <a class="toc-item" href="#spirit"><div class="toc-num" style="color:#c07a9b">X</div><div class="toc-info"><div class="toc-name">Faith, Power &amp; Purpose</div><div class="toc-sub">Spiritual &amp; Political Self</div></div><div class="toc-pg">p.10</div></a>
+      <a class="toc-item" href="#parting" style="grid-column:1/-1;border-right:none;"><div class="toc-num" style="color:var(--rose)">XI</div><div class="toc-info"><div class="toc-name">A Letter to My Future Self</div><div class="toc-sub">Parting Words / Essay</div></div><div class="toc-pg">p.11</div></a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ III. ESSAY -->
+<section id="essay" style="position:relative;overflow:hidden;">
+  <div class="section-roman">III</div>
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label" style="color:var(--teal)">Section III · Project Essay</div>
+      <h2 class="section-title">The Courage to <em>Look Inward</em></h2>
+      <div class="divider" style="background:var(--teal)"></div>
+    </div>
+    <div class="pull-quote reveal" style="border-color:var(--teal);color:var(--teal)">
+      "Know thyself" — two words that have outlasted empires, yet feel as urgent now as they did in ancient Athens.
+    </div>
+    <div class="body-text reveal">
+      <p>We live in an age of noise. Notifications fight for our attention, social feeds curate our self-image, and the pace of life rarely 
+        leaves room for the simple, necessary act of sitting still with oneself. <em>Mirrors of the Soul</em> is my attempt to do exactly 
+        that — to hold up a mirror, however uncomfortable, and truly look.</p>
+      <p> This final requirement  is a record of a semester spent turning over the many-sided gem that is 
+        human identity. Through Eastern and Western philosophy, through psychology and anthropology, through the body, the digital self, and 
+        the spiritual life — I have encountered frameworks that each illuminate a different facet of what it means to be a person.</p>
+      <p>The title <strong>Mirrors of the Soul</strong> captures what I believe self-understanding truly is: a collection of reflections. No 
+        single mirror shows the whole picture. It is only when we gather Eastern introspection alongside Western individualism, biological 
+        reality alongside social construction, material existence alongside spiritual yearning, that a fuller, richer image of the self begins 
+        to emerge.</p>
+      <p>What follows is that collection of reflections — honest, imperfect, and very much still in progress.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ IV. SMART GOAL -->
+<section id="smart" style="position:relative;overflow:hidden;">
+  <div class="section-roman">IV</div>
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label" style="color:var(--gold)">Section IV · Reflection</div>
+      <h2 class="section-title">A Goal, <em>Revisited</em></h2>
+      <div class="divider" style="background:var(--gold)"></div>
+    </div>
+    <div class="smart-grid reveal">
+      <div class="smart-card smart-s"><div class="letter">S</div><div class="word">Specific</div><div class="desc">A clear, focused intention with defined outcomes</div></div>
+      <div class="smart-card smart-m"><div class="letter">M</div><div class="word">Measurable</div><div class="desc">Progress tracked by observable markers</div></div>
+      <div class="smart-card smart-a"><div class="letter">A</div><div class="word">Achievable</div><div class="desc">Realistic given current skills and resources</div></div>
+      <div class="smart-card smart-r"><div class="letter">R</div><div class="word">Relevant</div><div class="desc">Aligned with personal values and growth</div></div>
+      <div class="smart-card smart-t"><div class="letter">T</div><div class="word">Time-bound</div><div class="desc">Anchored to a semester-long deadline</div></div>
+    </div>
+    <div class="reflection-box reveal">
+      <p>At first it was hard to be consistent as we had a month long vacation. In the end achieving this goal reminded me that progress begins with small and consistent actions. Discipline and self-awareness are just as important as motivation. Looking back I see how each learning activity strengthened my sense of purpose and resiliency. This accomplishment is not just a milestone but a proof that commitment and reflection can turn intention into transformation.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ V. EASTERN & WESTERN -->
+<div class="assess-section theme-east" id="east" style="position:relative;overflow:hidden;">
+  <div class="section-roman">V</div>
+  <div class="container">
+    <div class="assess-header reveal">
+      <div class="assess-icon" style="background:#e6f7f7;color:var(--teal);">☯</div>
+      <div>
+        <span class="assess-num">Section V · Module 1 Post-Assessment</span>
+        <h2 class="section-title" style="margin-bottom:0">Cultural Influences in <em>IT Learning</em></h2>
+      </div>
+    </div>
+    <div class="divider reveal" style="background:var(--teal)"></div>
+
+    <div class="img-wrap reveal" data-caption="Module 1 — Eastern &amp; Western Self Infographic">
+      <span class="img-label">Module 1 · Infographic</span>
+      <img src="infogprahic mod1.png" alt="Infographic for Module 1">
+      <div class="img-hint">🔍 Click to enlarge</div>
+    </div>
+
+    <div class="body-text reveal">
+      <p>I cannot pinpoint a single person who influenced me to pursue a career in IT. Instead, it was the tech community that shaped my interest in this field. A specific moment that stands out was when I was trying to fix a coding error by searching GitHub and Stack Overflow, where other programmers explain possible solutions. This community reflects both Eastern and Western characteristics.</p>
+    </div>
+    <div class="cards-row reveal">
+      <div class="mini-card mini-card-accent">
+        <h4>🌸 Eastern Perspective</h4>
+        <p>There is a strong sense of camaraderie and shared responsibility in helping each other learn.</p>
+      </div>
+      <div class="mini-card" style="background:#f8f4ff;border-color:#e0d0f5;">
+        <h4 style="color:#5a3a8b;">🏛 Western Perspective</h4>
+        <p>The community encourages independence, innovation, and openness to sharing new ideas.</p>
+      </div>
+    </div>
+    <div class="body-text reveal" style="margin-top:20px;">
+      <p>I encountered cultural differences during group projects as teammates also had different communication styles. I learned to be open-minded and respectful, which improved teamwork. As an IT student, one concrete action I can take is to ensure equal participation during team meetings by actively inviting quieter members to share their ideas. In the future, I can design software with inclusive and user-friendly features for people from different cultural backgrounds.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ VI. PHILOSOPHICAL & PSYCHOLOGICAL -->
+<div class="assess-section theme-philo" id="philo" style="position:relative;overflow:hidden;">
+  <div class="section-roman">VI</div>
+  <div class="container">
+    <div class="assess-header reveal">
+      <div class="assess-icon" style="background:#f3eeff;color:var(--violet);">🧠</div>
+      <div>
+        <span class="assess-num">Section VI · Module 2 Post-Assessment</span>
+        <h2 class="section-title" style="margin-bottom:0">Thinking <em>&amp; Feeling</em></h2>
+      </div>
+    </div>
+    <div class="divider reveal" style="background:var(--violet)"></div>
+
+    <div class="img-wrap reveal" data-caption="Module 2 — Philosophical &amp; Psychological Self">
+      <span class="img-label">Module 2 · Philosophical &amp; Psychological</span>
+      <img src="Self.jpg" alt="Philosophical and Psychological Self">
+      <div class="img-hint">🔍 Click to enlarge</div>
+    </div>
+
+    <div class="body-text reveal">
+      <p>There was a moment in my life where I realized that my identity was shaped by external expectations rather than my values. This experience is what relates me to William James' concept of <em>Me-Self and I-Self.</em> My Me-Self was influenced by feedback from others while my I-Self chose to reflect and learn from those experiences. My personal philosophy would be <em>"I am not defined by my circumstances, but by how I respond to them."</em> This philosophy also aligns with Albert Bandura's ideas about personal responsibility and choice.</p>
+    </div>
+    <div class="cards-row reveal">
+      <div class="mini-card mini-card-accent">
+        <h4>💭 Present and Future</h4>
+        <p>Dear Future Self, today I am still exploring the unknown — reflective and motivated, though sometimes uncertain. According to Erikson's Theory of Identity versus Role Confusion, this stage of questioning is necessary for growth. Ten years from now, I hope you remember to stay true to yourself, never stop learning, and make choices that reflect the real you.</p>
+      </div>
+      <div class="mini-card" style="background:#fff0f5;border-color:#f0c0d5;">
+        <h4 style="color:#8b2042;">🧩 Ideal Self</h4>
+        <p>My real self and ideal self differ in consistency but share the same values. While I strive to improve in my craft, I sometimes fall short of my own expectations. I practice self-acceptance instead of self-criticism — little by little I am reducing that gap. <em>This reflects Carl Jung's Idea of Self as Wholeness and Sigmund Freud's View of Inner Conflict,</em> helping me better understand myself.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ VII. ANTHROPOLOGICAL & SOCIOLOGICAL -->
+<div class="assess-section theme-anthro" id="anthro" style="position:relative;overflow:hidden;">
+  <div class="section-roman">VII</div>
+  <div class="container">
+    <div class="assess-header reveal">
+      <div class="assess-icon" style="background:#fdeef0;color:var(--rose);">🌍</div>
+      <div>
+        <span class="assess-num">Section VII · Anthropological &amp; Sociological Self Post-Assessment</span>
+        <h2 class="section-title" style="margin-bottom:0"><em>Looking Glass</em> Self</h2>
+      </div>
+    </div>
+    <div class="divider reveal" style="background:var(--rose)"></div>
+
+    <div class="img-wrap reveal" data-caption="Module 3 — Anthropological &amp; Sociological Self">
+      <span class="img-label">Module 3 · Anthropological &amp; Sociological</span>
+      <img src="Mod3.png" alt="Module 3 Infographic">
+      <div class="img-hint">🔍 Click to enlarge</div>
+    </div>
+
+    <div class="body-text reveal">
+      <p>I realized that my identity has been shaped by interactions with my family and friends — they taught me responsibility and adaptability.</p>
+    </div>
+    <div class="cards-row reveal">
+      <div class="mini-card mini-card-accent">
+        <h4>🪶 How Others See Me</h4>
+        <p>I often assume that others see me as a serious, hard-to-reach person, yet when I asked them directly they described me as funny, creative, and approachable — revealing that my self-image does not always match external perceptions.</p>
+      </div>
+      <div class="mini-card" style="background:#fff5e8;border-color:#f0d8b0;">
+        <h4 style="color:#6b4a00;">🏙 Identity in Motion</h4>
+        <p>This highlights that identity is not fixed — it continues to evolve through social mirrors, where both imagined and real feedback shape my understanding of myself and who I am to society.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ VIII. PHYSICAL & SEXUAL -->
+<div class="assess-section theme-body" id="body" style="position:relative;overflow:hidden;">
+  <div class="section-roman">VIII</div>
+  <div class="container">
+    <div class="assess-header reveal">
+      <div class="assess-icon" style="background:#fff9e8;color:#b07820;">🫀</div>
+      <div>
+        <span class="assess-num">Section VIII · Physical &amp; Sexual Self Post-Assessment</span>
+        <h2 class="section-title" style="margin-bottom:0">The Body <em>I Inhabit</em></h2>
+      </div>
+    </div>
+    <div class="divider reveal" style="background:var(--gold)"></div>
+
+    <div class="img-wrap reveal" data-caption="Module 4 — Physical &amp; Sexual Self">
+      <span class="img-label">Module 4 · Physical &amp; Sexual Self</span>
+      <img src="Personal and sexual self.png" alt="Personal and Sexual Self">
+      <div class="img-hint">🔍 Click to enlarge</div>
+    </div>
+
+    <div class="body-text reveal">
+      <p>I appreciate and care for my body and try to live a balanced and healthy lifestyle.</p>
+    </div>
+    <div class="cards-row reveal">
+      <div class="mini-card mini-card-accent">
+        <h4>💪 Sense of Self</h4>
+        <p>My sexuality and gender identity are a part of who I am — they help me understand how I relate to others, feel authentic, and how I want to be seen in this world. I embrace them with honesty and care, knowing they shape my confidence and connection. I stand against body shame and any form of violence, because everyone deserves respect and safety.</p>
+      </div>
+      <div class="mini-card" style="background:#f0fff5;border-color:#b0e8c8;">
+        <h4 style="color:#1a6b3a;">🌿 Promote Gender Equality</h4>
+        <p>By rejecting harmful practices, we affirm the right of every person to live with dignity, free from fear and prejudice.</p>
+        <p>I believe respect and equality starts when we recognize the inherent dignity of every person. By practicing compassion and challenging unfair systems, we can create spaces where everyone feels valued. I commit to fostering inclusivity so that dignity and equality are lived realities, not just ideals.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ IX. MATERIAL & DIGITAL -->
+<div class="assess-section theme-material" id="material" style="position:relative;overflow:hidden;">
+  <div class="section-roman">IX</div>
+  <div class="container">
+    <div class="assess-header reveal">
+      <div class="assess-icon" style="background:#eef8f3;color:var(--sage);">📱</div>
+      <div>
+        <span class="assess-num">Section IX · Material and Digital Self Post-Assessment</span>
+        <h2 class="section-title" style="margin-bottom:0">Material Self <em>&amp; Online Facade</em></h2>
+      </div>
+    </div>
+    <div class="divider reveal" style="background:var(--sage)"></div>
+
+    <div class="img-wrap reveal" data-caption="Module 5 — Material &amp; Digital Self">
+      <span class="img-label">Module 5 · Material &amp; Digital Self</span>
+      <img src="Material and Digital Self.png" alt="Material and Digital Self">
+      <div class="img-hint">🔍 Click to enlarge</div>
+    </div>
+
+    <div class="body-text reveal">
+      <p>My identity is shaped by both what I have and how I present myself online.</p>
+    </div>
+    <div class="cards-row reveal">
+      <div class="mini-card mini-card-accent">
+        <h4>🏠 Material Self</h4>
+        <p>I value simple, comfortable clothing that reflects my true personality rather than trying to impress. My family is the most important part of my world, giving me support and a sense of belonging. Among my possessions, my phone is essential — it connects me to people and information.</p>
+      </div>
+      <div class="mini-card" style="background:#e8f0ff;border-color:#c0d0f8;">
+        <h4 style="color:#1a3a8b;">💻 Digital Self</h4>
+        <p>Online, I present myself as positive and thoughtful, but not completely open. I tend to share only the good parts of my life, which means my digital self is real but somewhat filtered. I sometimes feel pressure from comparison and the need for validation, so I remind myself to stay respectful and true to my values. I aim to be more genuine so my online presence better reflects who I truly am.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ X. SPIRITUAL & POLITICAL -->
+<div class="assess-section theme-spirit" id="spirit" style="position:relative;overflow:hidden;">
+  <div class="section-roman">X</div>
+  <div class="container">
+    <div class="assess-header reveal">
+      <div class="assess-icon" style="background:#fceef5;color:#c07a9b;">✨</div>
+      <div>
+        <span class="assess-num">Section X · Spiritual &amp; Political Self Post-Assessment</span>
+        <h2 class="section-title" style="margin-bottom:0">Faith, Power <em>&amp; Purpose</em></h2>
+      </div>
+    </div>
+    <div class="divider reveal" style="background:#c07a9b"></div>
+
+    <div class="img-wrap reveal" data-caption="Module 6 — Spiritual &amp; Political Self">
+      <span class="img-label">Module 6 · Spiritual &amp; Political Self</span>
+      <img src="My Political and Spiritual Self.png" alt="Political and Spiritual Self">
+      <div class="img-hint">🔍 Click to enlarge</div>
+    </div>
+
+    <div class="body-text reveal">
+      <p>The deepest questions of self inevitably lead us to transcendence and to power. The spiritual self asks: Is there something greater than me? What gives my life ultimate meaning? The political self asks: How do I relate to power, justice, and the collective? Both dimensions share a common root — how we locate ourselves in relation to something larger than our individual existence.</p>
+    </div>
+    <div class="cards-row reveal">
+      <div class="mini-card mini-card-accent">
+        <h4>🕊 Spiritual Self</h4>
+        <p>My spiritual self is rooted in faith, inner peace, and compassion, which give meaning and direction to my life. It guides me to choose what is right and honest, even in difficult situations. My spiritual identity has been shaped by my family, religious community, and personal experiences that deepened my beliefs, providing comfort, strength, and hope.</p>
+      </div>
+      <div class="mini-card" style="background:#f5f0ff;border-color:#d0c0f0;">
+        <h4 style="color:#4a1a8b;">🗳 Political Self</h4>
+        <p>My political self is moderate and open-minded, guided by values of fairness, accountability, and inclusivity. School, media, and peer discussions have influenced my views by teaching me critical thinking and exposing me to different perspectives. Over time, my beliefs have shifted from being family-influenced to becoming more independent through education and personal reflection.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ XI. PARTING WORDS -->
+<section id="parting">
+  <div class="orbs">
+    <div class="orb orb-1" style="opacity:0.2"></div>
+    <div class="orb orb-2" style="opacity:0.2"></div>
+  </div>
+  <div class="container" style="position:relative;z-index:1">
+    <div class="reveal">
+      <div class="section-label">Section XI · Parting Words</div>
+      <h2 class="section-title">A Letter to My <em>Future Self</em></h2>
+    </div>
+    <div class="pull-quote reveal">
+      "The unexamined life is not worth living." — And perhaps the examined life is the most courageous thing we can attempt.
+    </div>
+    <div class="body-text reveal">
+      <p>This semester helped me understand some things about myself. I discovered that growth only begins in discomfort. Reflections showed me that courage is not loud — it is the quiet persistence in facing what I would rather avoid.</p>
+      <p>Collaboration reveals both my strengths and weaknesses. There were moments when I admitted I didn't have all the answers; reflecting on the lessons made me realize the uncomfortable truth. I'm still learning to balance confidence with humility, and that remains a work in progress.</p>
+      <p>I will carry the idea that self-examination is a lifelong journey. Reflecting by questioning, observing, and adjusting will guide me on how to approach both technology and relationships. Once in a while I'll slow down, stay curious, and keep learning with intention.</p>
+    </div>
+    <div style="text-align:center">
+      <div class="promise-card reveal">
+        <p>To my future self: I promise to keep looking in the mirror — not with judgment, but with curiosity and compassion. I promise to stay a student of my own life. And I promise that the self I am today is not the ceiling, but the foundation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p><span>Mirrors of the Soul</span> &nbsp;·&nbsp; Understanding the Self &nbsp;·&nbsp; Final Requirement &nbsp;·&nbsp; 2nd Semester (2026)</p>
+  <p style="margin-top:8px;opacity:0.5;">Crafted with intention — because knowing the self is a lifelong journey.</p>
+</footer>
+
+<script>
+  // Stars
+  const starsEl = document.getElementById('stars');
+  for(let i=0;i<80;i++){
+    const s=document.createElement('div'); s.className='star';
+    s.style.left=Math.random()*100+'%'; s.style.top=Math.random()*100+'%';
+    s.style.animationDelay=(Math.random()*4)+'s'; s.style.animationDuration=(2+Math.random()*3)+'s';
+    starsEl.appendChild(s);
+  }
+
+  // Scroll reveal
+  const revealObs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
+  },{threshold:0.1});
+  document.querySelectorAll('.reveal').forEach(r=>revealObs.observe(r));
+
+  // Lightbox
+  const lightbox  = document.getElementById('lightbox');
+  const lbImg     = document.getElementById('lightbox-img');
+  const lbCaption = document.getElementById('lightbox-caption');
+  const lbClose   = document.getElementById('lightbox-close');
+
+  document.querySelectorAll('.img-wrap').forEach(wrap=>{
+    wrap.addEventListener('click',()=>{
+      lbImg.src = wrap.querySelector('img').src;
+      lbImg.alt = wrap.querySelector('img').alt;
+      lbCaption.textContent = wrap.dataset.caption || '';
+      lightbox.classList.add('open');
+      document.body.style.overflow='hidden';
+    });
+  });
+
+  function closeLb(){ lightbox.classList.remove('open'); document.body.style.overflow=''; lbImg.src=''; }
+  lbClose.addEventListener('click', closeLb);
+  lightbox.addEventListener('click', e=>{ if(e.target===lightbox) closeLb(); });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeLb(); });
+
+  // Progress + page indicator
+  const bar      = document.getElementById('progress-bar');
+  const pgNum    = document.getElementById('pg-num');
+  const pgMenu   = document.getElementById('page-menu');
+  const pgToggle = document.getElementById('page-toggle');
+  const pgChev   = document.getElementById('pg-chevron');
+  const menuLinks= document.querySelectorAll('#page-menu a');
+
+  const pages=[
+    {id:'hero',page:1},{id:'toc',page:2},{id:'essay',page:3},
+    {id:'smart',page:4},{id:'east',page:5},{id:'philo',page:6},
+    {id:'anthro',page:7},{id:'body',page:8},{id:'material',page:9},
+    {id:'spirit',page:10},{id:'parting',page:11}
+  ];
+
+  let menuOpen=false;
+  pgToggle.addEventListener('click',()=>{
+    menuOpen=!menuOpen;
+    pgMenu.classList.toggle('open',menuOpen);
+    pgChev.classList.toggle('open',menuOpen);
+  });
+  menuLinks.forEach(a=>a.addEventListener('click',()=>{
+    menuOpen=false; pgMenu.classList.remove('open'); pgChev.classList.remove('open');
+  }));
+  document.addEventListener('click',e=>{
+    if(!document.getElementById('page-pill').contains(e.target)){
+      menuOpen=false; pgMenu.classList.remove('open'); pgChev.classList.remove('open');
+    }
+  });
+
+  function updatePage(){
+    const scrollY=window.scrollY, maxScroll=document.body.scrollHeight-window.innerHeight;
+    bar.style.width=(scrollY/maxScroll*100)+'%';
+    let current=pages[0];
+    pages.forEach(p=>{ const el=document.getElementById(p.id); if(el&&scrollY>=el.offsetTop-window.innerHeight*0.4) current=p; });
+    pgNum.textContent=current.page;
+    menuLinks.forEach(a=>a.classList.toggle('active',parseInt(a.dataset.page)===current.page));
+  }
+  window.addEventListener('scroll',updatePage,{passive:true});
+  updatePage();
+</script>
+</body>
+</html>
